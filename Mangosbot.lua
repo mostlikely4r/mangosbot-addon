@@ -8,9 +8,14 @@ Mangosbot_EventFrame:Hide()
 
 local ToolBars = {}
 local GroupToolBars = {}
+local CommandSeparator = "\\\\"
 function SendBotCommand(text, chat, lang, channel)
     if (chat == "PARTY" and GetNumPartyMembers() == 0) then return end
-    SendChatMessage(text, chat, lang, channel)
+    if (chat == "PARTY") then 
+        SendAddonMessage("", text, chat, channel)
+    else
+        SendChatMessage(text, chat, lang, channel)
+    end
 end
 function SendBotAddonCommand(text, chat, lang, channel)
     SendBotCommand("#a "..text, chat, lang, channel)
@@ -125,25 +130,33 @@ function ToolBarButtonOnClick(btn, visual)
 
     if (btn["group"]) then
         local delay = 0
+        local first = true
+        local combined = ""
         for key, command in pairs(btn["command"]) do
-            wait(key, function(command) SendBotCommand(command, "PARTY") end, command)
-            if (delay < key) then delay = key end
+            combined = combined..command..CommandSeparator
         end
+        combined = string.sub(combined, 1, string.len(combined) - 2)
+        wait(0, function(combined) SendBotCommand(combined, "PARTY") end, combined)
         if (btn["tooltip"] ~= nil) then
             wait(delay + 1, function(command) SendBotCommand(command, "PARTY") end, btn["tooltip"])
         end
     else
         local bot = GetUnitName("target")
         if (bot == nil) then bot = CurrentBot end
+        local combined = ""
         for key, command in pairs(btn["command"]) do
-            wait(key, function(command, bot) SendBotCommand(command, "WHISPER", nil, bot) end, command, bot)
+            combined = combined..command..CommandSeparator
         end
+        combined = string.sub(combined, 1, string.len(combined) - 2)
+        wait(0, function(combined, bot) SendBotCommand(combined, "WHISPER", nil, bot) end, combined, bot)
     end
 end
 
-function ToggleButton(frame, toolbar, button, toggle)
+function ToggleButton(frame, toolbar, button, toggle, mixed)
     local btn = frame.toolbar[toolbar].buttons[button]
-    if (toggle) then
+    if (toggle and mixed) then
+        btn:SetBackdropBorderColor(0.2, 0.4, 0.2, 1.0)
+    elseif (toggle) then
         btn:SetBackdropBorderColor(0.2, 1.0, 0.2, 1.0)
     else
         btn:SetBackdropBorderColor(0, 0, 0, 0.0)
@@ -383,6 +396,12 @@ function CreateBotRoster()
     GroupToolBars["group_savemana"] = CreateSaveManaToolBar(frame, 0, "group_savemana", true, 5, 0, false)
     frame.toolbar["group_savemana"]:SetBackdropBorderColor(0,0,0,0.0)
 
+    GroupToolBars["group_generic"] = CreateGenericNonCombatToolBar(frame, 0, "group_generic", true, 5, 0, false)
+    frame.toolbar["group_generic"]:SetBackdropBorderColor(0,0,0,0.0)
+
+    GroupToolBars["group_generic_combat"] = CreateGenericCombatToolBar(frame, 0, "group_generic_combat", true, 5, 0, false)
+    frame.toolbar["group_generic_combat"]:SetBackdropBorderColor(0,0,0,0.0)
+
     return frame
 end
 
@@ -392,7 +411,7 @@ function CreateRtiToolBar(frame, y, name, group, x, spacing, register)
             icon = "rti_skull",
             command = {[0] = "rti skull"},
             rti = "skull",
-            tooltip = "Assign skull mark",
+            tooltip = "Attack skull mark",
             index = 0,
             group = group
         },
@@ -400,7 +419,7 @@ function CreateRtiToolBar(frame, y, name, group, x, spacing, register)
             icon = "rti_cross",
             command = {[0] = "rti cross"},
             rti = "cross",
-            tooltip = "Assign cross mark",
+            tooltip = "Attack cross mark",
             index = 1,
             group = group
         },
@@ -408,7 +427,7 @@ function CreateRtiToolBar(frame, y, name, group, x, spacing, register)
             icon = "rti_circle",
             command = {[0] = "rti circle"},
             rti = "circle",
-            tooltip = "Assign circle mark",
+            tooltip = "Attack circle mark",
             index = 2,
             group = group
         },
@@ -416,7 +435,7 @@ function CreateRtiToolBar(frame, y, name, group, x, spacing, register)
             icon = "rti_star",
             command = {[0] = "rti star"},
             rti = "star",
-            tooltip = "Assign star mark",
+            tooltip = "Attack star mark",
             index = 3,
             group = group
         },
@@ -424,7 +443,7 @@ function CreateRtiToolBar(frame, y, name, group, x, spacing, register)
             icon = "rti_square",
             command = {[0] = "rti square"},
             rti = "square",
-            tooltip = "Assign square mark",
+            tooltip = "Attack square mark",
             index = 4,
             group = group
         },
@@ -432,7 +451,7 @@ function CreateRtiToolBar(frame, y, name, group, x, spacing, register)
             icon = "rti_triangle",
             command = {[0] = "rti triangle"},
             rti = "triangle",
-            tooltip = "Assign triangle mark",
+            tooltip = "Attack triangle mark",
             index = 5,
             group = group
         },
@@ -440,8 +459,85 @@ function CreateRtiToolBar(frame, y, name, group, x, spacing, register)
             icon = "rti_diamond",
             command = {[0] = "rti diamond"},
             rti = "diamond",
-            tooltip = "Assign diamond mark",
+            tooltip = "Attack diamond mark",
             index = 6,
+            group = group
+        },
+        ["rti_moon"] = {
+            icon = "rti_moon",
+            command = {[0] = "rti moon"},
+            rti = "moon",
+            tooltip = "Attack moon mark",
+            index = 7,
+            group = group
+        }
+    }, x, spacing, register)
+end
+
+function CreateRtiCcToolBar(frame, y, name, group, x, spacing, register)
+    return CreateToolBar(frame, -y, name, {
+        ["rti_skull"] = {
+            icon = "cc_skull",
+            command = {[0] = "rti cc skull"},
+            rti_cc = "skull",
+            tooltip = "CC skull mark",
+            index = 0,
+            group = group
+        },
+        ["rti_cross"] = {
+            icon = "cc_cross",
+            command = {[0] = "rti cc cross"},
+            rti_cc = "cross",
+            tooltip = "CC cross mark",
+            index = 1,
+            group = group
+        },
+        ["rti_circle"] = {
+            icon = "cc_circle",
+            command = {[0] = "rti cc circle"},
+            rti_cc = "circle",
+            tooltip = "CC circle mark",
+            index = 2,
+            group = group
+        },
+        ["rti_star"] = {
+            icon = "cc_star",
+            command = {[0] = "rti cc star"},
+            rti_cc = "star",
+            tooltip = "CC star mark",
+            index = 3,
+            group = group
+        },
+        ["rti_square"] = {
+            icon = "cc_square",
+            command = {[0] = "rti cc square"},
+            rti_cc = "square",
+            tooltip = "CC square mark",
+            index = 4,
+            group = group
+        },
+        ["rti_triangle"] = {
+            icon = "cc_triangle",
+            command = {[0] = "rti cc triangle"},
+            rti_cc = "triangle",
+            tooltip = "CC triangle mark",
+            index = 5,
+            group = group
+        },
+        ["rti_diamond"] = {
+            icon = "cc_diamond",
+            command = {[0] = "rti cc diamond"},
+            rti_cc = "diamond",
+            tooltip = "CC diamond mark",
+            index = 6,
+            group = group
+        },
+        ["rti_moon"] = {
+            icon = "cc_moon",
+            command = {[0] = "rti cc moon"},
+            rti_cc = "moon",
+            tooltip = "CC moon mark",
+            index = 7,
             group = group
         }
     }, x, spacing, register)
@@ -588,36 +684,110 @@ function CreateFormationToolBar(frame, y, name, group, x, spacing, register)
             index = 2,
             group = group
         },
+        ["far"] = {
+            icon = "formation_far",
+            command = {[0] = "formation far"},
+            formation = "far",
+            tooltip = "Maintain a distance",
+            index = 3,
+            group = group
+        },
         ["chaos"] = {
             icon = "formation_chaos",
             command = {[0] = "formation chaos"},
             formation = "chaos",
             tooltip = "Move freely",
+            index = 4,
+            group = group
+        }
+    }, x, spacing, register)
+end
+
+function CreateGenericNonCombatToolBar(frame, y, name, group, x, spacing, register)
+    return CreateToolBar(frame, -y, name, {
+        ["food"] = {
+            icon = "food",
+            command = {[0] = "nc ~food,?"},
+            strategy = "food",
+            tooltip = "Use food and drinks",
+            index = 0,
+            group = group
+        },
+        ["buff"] = {
+            icon = "bdps",
+            command = {[0] = "nc ~buff,?"},
+            strategy = "buff",
+            tooltip = "Buff party members",
+            index = 1,
+            group = group
+        },
+        ["loot"] = {
+            icon = "loot",
+            command = {[0] = "nc ~loot,?"},
+            strategy = "loot",
+            tooltip = "Enable looting",
+            index = 2,
+            group = group
+        },
+        ["gather"] = {
+            icon = "gather",
+            command = {[0] = "nc ~gather,?"},
+            strategy = "gather",
+            tooltip = "Gather herbs, ore, etc.",
+            index = 3,
+            group = group
+        }
+    }, x, spacing, register)
+end
+
+function CreateGenericCombatToolBar(frame, y, name, group, x, spacing, register)
+    return CreateToolBar(frame, -y, name, {
+        ["potions"] = {
+            icon = "potions",
+            command = {[0] = "co ~potions,?"},
+            strategy = "potions",
+            tooltip = "Use health and mana potions",
+            index = 0,
+            group = group
+        },
+        ["cast_time"] = {
+            icon = "cast_time",
+            command = {[0] = "co ~cast time,?"},
+            strategy = "cast time",
+            tooltip = "Do not cast long spells on almost dead targets",
+            index = 1,
+            group = group
+        },
+        ["mark_rti"] = {
+            icon = "mark_rti",
+            command = {[0] = "co ~mark rti,?"},
+            strategy = "mark rti",
+            tooltip = "Mark current target with raid icon",
+            index = 2,
+            group = group
+        },
+        ["ads"] = {
+            icon = "ads",
+            command = {[0] = "co ~ads,?", [1] = "nc ~ads,?"},
+            strategy = "ads",
+            tooltip = "Flee if ads might be pulled",
             index = 3,
             group = group
         },
-        ["line"] = {
-            icon = "formation_line",
-            command = {[0] = "formation line"},
-            formation = "line",
-            tooltip = "Form a line",
+        ["boost"] = {
+            icon = "boost",
+            command = {[0] = "co ~boost,?"},
+            strategy = "boost",
+            tooltip = "Boost dps by using cooldowns",
             index = 4,
             group = group
         },
-        ["queue"] = {
-            icon = "formation_queue",
-            command = {[0] = "formation queue"},
-            formation = "queue",
-            tooltip = "Form a queue",
+        ["cc"] = {
+            icon = "cc",
+            command = {[0] = "co ~cc,?"},
+            strategy = "cc",
+            tooltip = "Use crowd control abilities",
             index = 5,
-            group = group
-        },
-        ["circle"] = {
-            icon = "formation_circle",
-            command = {[0] = "formation circle"},
-            formation = "circle",
-            tooltip = "Form a big circle",
-            index = 6,
             group = group
         }
     }, x, spacing, register)
@@ -840,12 +1010,26 @@ function CreateSelectedBotPanel()
             tooltip = "Assist others",
             index = 1
         },
+        ["close"] = {
+            icon = "close",
+            command = {[0] = "co ~close,?"},
+            strategy = "close",
+            tooltip = "Melee combat",
+            index = 2
+        },
+        ["ranged"] = {
+            icon = "ranged",
+            command = {[0] = "co ~ranged,?"},
+            strategy = "ranged",
+            tooltip = "Ranged combat",
+            index = 3
+        },
         ["threat"] = {
             icon = "threat",
             command = {[0] = "co ~threat,?"},
             strategy = "threat",
             tooltip = "Keep threat level low",
-            index = 2
+            index = 4
         }
     })
 
@@ -853,29 +1037,13 @@ function CreateSelectedBotPanel()
     CreateRtiToolBar(frame, y, "rti", false, 5, 5, true)
 
     y = y + 25
-    CreateToolBar(frame, -y, "generic", {
-        ["potions"] = {
-            icon = "potions",
-            command = {[0] = "co ~potions,?"},
-            strategy = "potions",
-            tooltip = "Use health and mana potions",
-            index = 0
-        },
-        ["food"] = {
-            icon = "food",
-            command = {[0] = "nc ~food,?"},
-            strategy = "food",
-            tooltip = "Use food and drinks",
-            index = 1
-        },
-        ["cast_time"] = {
-            icon = "cast_time",
-            command = {[0] = "co ~cast time,?"},
-            strategy = "cast time",
-            tooltip = "Cast long spells cautiously",
-            index = 2
-        }
-    })
+    CreateRtiCcToolBar(frame, y, "rti cc", false, 5, 5, true)
+
+    y = y + 25
+    CreateGenericNonCombatToolBar(frame, y, "generic", false, 5, 5, true)
+
+    y = y + 25
+    CreateGenericCombatToolBar(frame, y, "generic_combat", false, 5, 5, true)
 
     y = y + 25
     CreateToolBar(frame, -y, "CLASS_DRUID", {
@@ -913,6 +1081,13 @@ function CreateSelectedBotPanel()
             strategy = "cure",
             tooltip = "Cure (poison, disease, etc.)",
             index = 4
+        },
+        ["melee"] = {
+            icon = "dps",
+            command = {[0] = "co ~melee,?"},
+            strategy = "melee",
+            tooltip = "Melee",
+            index = 5
         }
     })
     CreateToolBar(frame, -y, "CLASS_HUNTER", {
@@ -923,18 +1098,18 @@ function CreateSelectedBotPanel()
             tooltip = "DPS mode",
             index = 0
         },
+        ["aoe"] = {
+            icon = "aoe",
+            command = {[0] = "co ~aoe,?"},
+            strategy = "aoe",
+            tooltip = "Use AOE abilities",
+            index = 1
+        },
         ["bspeed"] = {
             icon = "bspeed",
             command = {[0] = "co ~bspeed,?", [1] = "nc ~bspeed,?"},
             strategy = "bspeed",
             tooltip = "Buff movement speed",
-            index = 1
-        },
-        ["bmana"] = {
-            icon = "bmana",
-            command = {[0] = "co ~bmana,?", [1] = "nc ~bmana,?"},
-            strategy = "bmana",
-            tooltip = "Buff mana regen",
             index = 2
         },
         ["bdps"] = {
@@ -1025,54 +1200,19 @@ function CreateSelectedBotPanel()
             tooltip = "Healer mode",
             index = 2
         },
-        ["bmana"] = {
-            icon = "bmana",
-            command = {[0] = "co ~bmana,?", [1] = "nc ~bmana,?"},
-            strategy = "bmana",
-            tooltip = "Buff mana regen",
-            index = 3
-        },
-        ["bhealth"] = {
-            icon = "bhealth",
-            command = {[0] = "co ~bhealth,?"},
-            strategy = "bhealth",
-            tooltip = "Buff health regen",
-            index = 4
-        },
-        ["bdps"] = {
-            icon = "bdps",
-            command = {[0] = "co ~bdps,?", [1] = "nc ~bdps,?"},
-            strategy = "bdps",
-            tooltip = "Buff DPS",
-            index = 5
-        },
-        ["barmor"] = {
-            icon = "barmor",
-            command = {[0] = "co ~barmor,?", [1] = "nc ~barmor,?"},
-            strategy = "barmor",
-            tooltip = "Buff armor",
-            index = 6
-        },
-        ["bspeed"] = {
-            icon = "bspeed",
-            command = {[0] = "co ~bspeed,?", [1] = "nc ~bspeed,?"},
-            strategy = "bspeed",
-            tooltip = "Buff movement speed",
-            index = 7
-        },
-        ["bthreat"] = {
-            icon = "bthreat",
-            command = {[0] = "co ~bthreat,?", [1] = "nc ~bthreat,?"},
-            strategy = "bthreat",
-            tooltip = "Buff threat generation",
-            index = 8
-        },
         ["cure"] = {
             icon = "cure",
             command = {[0] = "co ~cure,?", [1] = "nc ~cure,?"},
             strategy = "cure",
             tooltip = "Cure (poison, disease, etc.)",
-            index = 9
+            index = 3
+        },
+        ["bthreat"] = {
+            icon = "bthreat",
+            command = {[0] = "nc ~bthreat,?"},
+            strategy = "bthreat",
+            tooltip = "Increase threat generation",
+            index = 4
         }
     })
     CreateToolBar(frame, -y, "CLASS_PRIEST", {
@@ -1117,6 +1257,13 @@ function CreateSelectedBotPanel()
             strategy = "cure",
             tooltip = "Cure (poison, disease, etc.)",
             index = 5
+        },
+        ["rshadow"] = {
+            icon = "rshadow",
+            command = {[0] = "co ~rshadow,?", [1] = "nc ~rshadow,?"},
+            strategy = "rshadow",
+            tooltip = "Provide shadow resistance",
+            index = 6
         }
     })
     CreateToolBar(frame, -y, "CLASS_ROGUE", {
@@ -1126,6 +1273,13 @@ function CreateSelectedBotPanel()
             strategy = "dps",
             tooltip = "DPS mode",
             index = 0
+        },
+        ["aoe"] = {
+            icon = "aoe",
+            command = {[0] = "co ~aoe,?"},
+            strategy = "aoe",
+            tooltip = "Use AOE abilities",
+            index = 1
         }
     })
     CreateToolBar(frame, -y, "CLASS_SHAMAN", {
@@ -1246,6 +1400,78 @@ function CreateSelectedBotPanel()
             index = 2
         }
     })
+    
+    y = y + 25
+    CreateToolBar(frame, -y, "CLASS_PALADIN_BUFF", {
+        ["bmana"] = {
+            icon = "bmana",
+            command = {[0] = "co +bmana,?", [1] = "nc +bmana,?"},
+            strategy = "bmana",
+            tooltip = "Buff mana regen",
+            index = 0
+        },
+        ["bhealth"] = {
+            icon = "bhealth",
+            command = {[0] = "co +bhealth,?", [1] = "nc +bhealth,?"},
+            strategy = "bhealth",
+            tooltip = "Buff health regen",
+            index = 1
+        },
+        ["bdps"] = {
+            icon = "bdps",
+            command = {[0] = "co +bdps,?", [1] = "nc +bdps,?"},
+            strategy = "bdps",
+            tooltip = "Buff melee DPS",
+            index = 2
+        },
+        ["bstats"] = {
+            icon = "holy",
+            command = {[0] = "co +bstats,?", [1] = "nc +bstats,?"},
+            strategy = "bstats",
+            tooltip = "Buff stats",
+            index = 3
+        }
+    })
+    
+    y = y + 25
+    CreateToolBar(frame, -y, "CLASS_PALADIN_AURA", {
+        ["baoe"] = {
+            icon = "aoe",
+            command = {[0] = "co +baoe,?", [1] = "nc +baoe,?"},
+            strategy = "baoe",
+            tooltip = "Retribution aura",
+            index = 0
+        },
+        ["rfire"] = {
+            icon = "fire",
+            command = {[0] = "co +rfire,?", [1] = "nc +rfire,?"},
+            strategy = "rfire",
+            tooltip = "Fire resistance aura",
+            index = 1
+        },
+        ["rfrost"] = {
+            icon = "frost",
+            command = {[0] = "co +rfrost,?", [1] = "nc +rfrost,?"},
+            strategy = "rfrost",
+            tooltip = "Frost resistance aura",
+            index = 2
+        },
+        ["rshadow"] = {
+            icon = "rshadow",
+            command = {[0] = "co +rshadow,?", [1] = "nc +rshadow,?"},
+            strategy = "rshadow",
+            tooltip = "Shadow resistance aura",
+            index = 3
+        },
+        ["barmor"] = {
+            icon = "barmor",
+            command = {[0] = "co +barmor,?", [1] = "nc +barmor,?"},
+            strategy = "barmor",
+            tooltip = "Devotion aura",
+            index = 4
+        }
+    })
+    
 
     frame:SetHeight(y + 25)
     return frame
@@ -1342,8 +1568,17 @@ end
 function UpdateBotDebugPanel(message, sender)
     local splitted = splitString2(message, "|")
     local length = tablelength(splitted)
-    BotDebugPanel.header.text:SetText("Debug Info "..length)
-
+    local filtered = {}
+    for i = 1, length do
+        local row = splitted[i];
+        if (string.find(row, BotDebugFilter)) then
+            table.insert(filtered, row)
+        end
+    end
+    
+    length = tablelength(filtered)
+    BotDebugPanel.header.text:SetText("Debug Info "..length..", Filter: "..BotDebugFilter)
+    
     if (length > MaxDebugLines) then length = MaxDebugLines end
 
     local first = MaxDebugLines - length + 1
@@ -1356,7 +1591,7 @@ function UpdateBotDebugPanel(message, sender)
 
     for i = first, MaxDebugLines do
         local idx = i - first + 1
-        local name = trim2(splitted[idx])
+        local name = trim2(filtered[idx])
         local line = BotDebugPanel["text"..i]
         line:SetText(name)
     end
@@ -1367,18 +1602,18 @@ SelectedBotPanel = CreateSelectedBotPanel();
 BotRoster = CreateBotRoster();
 BotDebugPanel = CreateBotDebugPanel();
 CurrentBot = nil
+BotDebugFilter = ""
 
 local function fmod(a,b)
     return a - math.floor(a/b)*b
 end
 
+function QueryBotParty()
+    wait(0.1, function() SendBotCommand("#a ll ?"..CommandSeparator.."#a formation ?"..CommandSeparator.."#a co ?"..CommandSeparator.."#a nc ?"..CommandSeparator.."#a save mana ?", "PARTY") end)
+end
+
 function QuerySelectedBot(name)
-    wait(0.1, function() SendBotAddonCommand("nc ?", "WHISPER", nil, name) end)
-    wait(0.2, function() SendBotAddonCommand("co ?", "WHISPER", nil, name) end)
-    wait(0.3, function() SendBotAddonCommand("formation ?", "WHISPER", nil, name) end)
-    wait(0.4, function() SendBotAddonCommand("rti ?", "WHISPER", nil, name) end)
-    wait(0.5, function() SendBotAddonCommand("ll ?", "WHISPER", nil, name) end)
-    wait(0.6, function() SendBotAddonCommand("save mana ?", "WHISPER", nil, name) end)
+    wait(0.1, function() SendBotCommand("#a formation ?"..CommandSeparator.."#a ll ?"..CommandSeparator.."#a co ?"..CommandSeparator.."#a nc ?"..CommandSeparator.."#a save mana ?"..CommandSeparator.."#a rti ?", "WHISPER", nil, name) end)
 end
 
 Mangosbot_EventFrame:SetScript("OnEvent", function(self)
@@ -1614,6 +1849,24 @@ Mangosbot_EventFrame:SetScript("OnEvent", function(self)
                 savemanaToolBar:Hide()
             end
 
+            local genericToolBar = BotRoster.toolbar["group_generic"]
+            if (atLeastOneBotInParty) then
+                genericToolBar:Show()
+                y = y + 22
+                genericToolBar:SetPoint("TOPLEFT", BotRoster, "TOPLEFT", 5, -y)
+            else
+                genericToolBar:Hide()
+            end
+
+            local genericCombatToolBar = BotRoster.toolbar["group_generic_combat"]
+            if (atLeastOneBotInParty) then
+                genericCombatToolBar:Show()
+                y = y + 22
+                genericCombatToolBar:SetPoint("TOPLEFT", BotRoster, "TOPLEFT", 5, -y)
+            else
+                genericCombatToolBar:Hide()
+            end
+
             UpdateGroupToolBar()
             BotRoster:SetWidth(width)
             BotRoster:SetHeight(y + 22)
@@ -1634,11 +1887,7 @@ Mangosbot_EventFrame:SetScript("OnEvent", function(self)
 
         if (string.find(message, "Hello") == 1 or string.find(message, "Goodbye") == 1) then
             SendBotCommand(".bot list", "SAY")
-            SendBotAddonCommand("formation ?", "PARTY")
-            SendBotAddonCommand("ll ?", "PARTY")
-            SendBotAddonCommand("co ?", "PARTY")
-            SendBotAddonCommand("nc ?", "PARTY")
-            SendBotAddonCommand("save mana ?", "PARTY")
+            QueryBotParty()
         end
         if (string.find(message, "Following") == 1 or string.find(message, "Staying") == 1 or string.find(message, "Fleeing") == 1) then
             wait(0.1, function() SendBotAddonCommand("nc ?", "WHISPER", nil, sender) end)
@@ -1649,8 +1898,11 @@ Mangosbot_EventFrame:SetScript("OnEvent", function(self)
         if (string.find(message, "Loot strategy set to ") == 1) then
             wait(0.1, function() SendBotAddonCommand("ll ?", "WHISPER", nil, sender) end)
         end
-        if (string.find(message, "RTI set to") == 1) then
+        if (string.find(message, "rti set to") == 1) then
             wait(0.1, function() SendBotAddonCommand("rti ?", "WHISPER", nil, sender) end)
+        end
+        if (string.find(message, "rti cc set to") == 1) then
+            wait(0.1, function() SendBotAddonCommand("rti cc ?", "WHISPER", nil, sender) end)
         end
         if (string.find(message, "save mana") == 1) then
             wait(0.1, function() SendBotAddonCommand("save mana ?", "WHISPER", nil, sender) end)
@@ -1682,7 +1934,7 @@ Mangosbot_EventFrame:SetScript("OnEvent", function(self)
             for toolbarName,toolbar in pairs(ToolBars) do
                 local panelVisible = true
                 if (string.find(toolbarName, "CLASS_") == 1) then
-                    if (string.sub(toolbarName, 7) == class) then
+                    if (string.find(string.sub(toolbarName, 7), class) == 1) then
                         SelectedBotPanel.toolbar[toolbarName]:Show()
                     else
                         SelectedBotPanel.toolbar[toolbarName]:Hide()
@@ -1712,6 +1964,9 @@ Mangosbot_EventFrame:SetScript("OnEvent", function(self)
                     if (button["rti"] ~= nil and bot["rti"] ~= nil and string.find(bot["rti"], button["rti"]) ~= nil) then
                         toggle = true
                     end
+                    if (button["rti_cc"] ~= nil and bot["rti_cc"] ~= nil and string.find(bot["rti_cc"], button["rti_cc"]) ~= nil) then
+                        toggle = true
+                    end
                     if (button["loot"] ~= nil and bot["loot"] ~= nil and string.find(bot["loot"], button["loot"]) ~= nil) then
                         toggle = true
                     end
@@ -1734,8 +1989,9 @@ end)
 function UpdateGroupToolBar()
     for toolbarName,toolbar in pairs(GroupToolBars) do
         for buttonName,button in pairs(toolbar) do
-            local toggle = false
-            for key,bot in pairs(botTable) do
+            local toggleCount = 0
+            for botName,bot in pairs(botTable) do
+                local toggle = false
                 if (button["strategy"] ~= nil and bot["strategy"] ~= nil) then
                     for key,strategy in pairs(bot["strategy"]["nc"]) do
                         if (strategy == button["strategy"]) then
@@ -1756,14 +2012,25 @@ function UpdateGroupToolBar()
                 if (button["rti"] ~= nil and bot["rti"] ~= nil and string.find(bot["rti"], button["rti"]) ~= nil) then
                     toggle = true
                 end
+                if (button["rti_cc"] ~= nil and bot["rti_cc"] ~= nil and string.find(bot["rti_cc"], button["rti_cc"]) ~= nil) then
+                    toggle = true
+                end
                 if (button["loot"] ~= nil and bot["loot"] ~= nil and string.find(bot["loot"], button["loot"]) ~= nil) then
                     toggle = true
                 end
                 if (button["savemana"] ~= nil and bot["savemana"] ~= nil and string.find(bot["savemana"], button["savemana"]) ~= nil) then
                     toggle = true
                 end
+                
+                if (toggle) then 
+                    for i = 1,5 do
+                        if (UnitName("party"..i) == botName) then
+                            toggleCount = toggleCount + 1
+                        end
+                    end
+                end
             end
-            ToggleButton(BotRoster, toolbarName, buttonName, toggle)
+            ToggleButton(BotRoster, toolbarName, buttonName, toggleCount > 0, toggleCount < GetNumPartyMembers())
         end
     end
 end
@@ -1839,8 +2106,11 @@ function OnWhisper(message, sender)
     if (string.find(message, 'Loot strategy: ') == 1) then
         bot['loot'] = string.sub(message, 15)
     end
-    if (string.find(message, 'RTI: ') == 1) then
+    if (string.find(message, 'rti: ') == 1) then
         bot['rti'] = string.sub(message, 5)
+    end
+    if (string.find(message, 'rti cc: ') == 1) then
+        bot['rti_cc'] = string.sub(message, 5)
     end
 end
 
@@ -1875,18 +2145,16 @@ function SlashCmdList.MANGOSBOT(msg, editbox) -- 4.
         else
             BotRoster.ShowRequest = true
             SendBotCommand(".bot list", "SAY")
-            SendBotAddonCommand("formation ?", "PARTY")
-            SendBotAddonCommand("co ?", "PARTY")
-            SendBotAddonCommand("nc ?", "PARTY")
-            SendBotAddonCommand("ll ?", "PARTY")
-            SendBotAddonCommand("save mana ?", "PARTY")
+            QueryBotParty()
         end
     end
-    if (msg == "debug") then
-        if (BotDebugPanel:IsVisible()) then
+    if (string.find(msg, "debug")) then
+        local cmd = string.sub(msg, 7)
+        if (string.len(cmd) == 0 and BotDebugPanel:IsVisible()) then
             BotDebugPanel:Hide()
         else
             BotDebugPanel:Show()
+            BotDebugFilter = cmd;
         end
     end
 end
