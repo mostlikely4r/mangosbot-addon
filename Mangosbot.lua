@@ -1441,26 +1441,33 @@ function CreateSelectedBotPanel()
         }
     })
     CreateToolBar(frame, -y, "CLASS_WARRIOR", {
-        ["dps"] = {
+        ["arms"] = {
             icon = "dps",
-            command = {[0] = "co +dps,?"},
-            strategy = "dps",
-            tooltip = "DPS mode",
+            command = {[0] = "co +arms,+dps assist,?", [1] = "nc +dps assist,?"},
+            strategy = "arms",
+            tooltip = "Arms rotation",
             index = 0
         },
-        ["warrior_aoe"] = {
-            icon = "warrior_aoe",
-            command = {[0] = "co ~aoe,?"},
-            strategy = "aoe",
-            tooltip = "Use AOE abilities",
+        ["fury"] = {
+            icon = "grind",
+            command = {[0] = "co +fury,+dps assist,?", [1] = "nc +dps assist,?"},
+            strategy = "fury",
+            tooltip = "Fury rotation",
             index = 1
         },
         ["tank"] = {
             icon = "tank",
-            command = {[0] = "co +tank,?"},
+            command = {[0] = "co +tank,+tank assist,?", [1] = "nc +tank assist,?"},
             strategy = "tank",
-            tooltip = "Summon tanky demons",
+            tooltip = "Tank rotation",
             index = 2
+        },
+        ["aoe"] = {
+            icon = "warrior_aoe",
+            command = {[0] = "co ~aoe,?"},
+            strategy = "aoe",
+            tooltip = "Use AOE abilities",
+            index = 3
         }
     })
     
