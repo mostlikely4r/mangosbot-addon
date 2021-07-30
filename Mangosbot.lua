@@ -1047,14 +1047,14 @@ function CreateSelectedBotPanel()
     CreateToolBar(frame, -y, "attack_type", {
         ["tank_aoe"] = {
             icon = "tank_assist",
-            command = {[0] = "nc +tank aoe,?",[1] = "co +tank aoe,?"},
-            strategy = "tank aoe",
+            command = {[0] = "nc ~tank assist,?", [1] = "co ~tank assist,?"},
+            strategy = "tank assist",
             tooltip = "Grab all aggro",
             index = 0
         },
         ["dps_assist"] = {
             icon = "dps_assist",
-            command = {[0] = "nc +dps assist,?",[1] = "co +dps assist,?"},
+            command = {[0] = "nc ~dps assist,?", [1] = "co ~dps assist,?"},
             strategy = "dps assist",
             tooltip = "Assist others",
             index = 1
