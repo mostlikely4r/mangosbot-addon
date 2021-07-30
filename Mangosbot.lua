@@ -629,7 +629,7 @@ function CreateMovementToolBar(frame, y, name, group, x, spacing, register)
         index = index + 1
         tb["attack"] = {
             icon = "dps",
-            command = {[0] = "d attack my target"},
+            command = {[0] = "co -passive,+dps assist", [1] = "nc -passive,+dps assist", [2] = "@tank co -dps assist,+tank assist", [3] = "@tank nc -dps assist,+tank assist", [4] = "queue attack"},
             strategy = "",
             tooltip = "Attack my target",
             index = index,
@@ -638,7 +638,7 @@ function CreateMovementToolBar(frame, y, name, group, x, spacing, register)
         index = index + 1
         tb["pull"] = {
             icon = "tank_assist",
-            command = {[0] = "#a @dps flee", [1] = "#a @heal flee", [2] = "#a @tank d attack my target"},
+            command = {[0] = "@dps co -dps assist", [1] = "@dps nc -dps assist", [2] = "@tank attack"},
             strategy = "",
             tooltip = "Pull",
             index = index,
