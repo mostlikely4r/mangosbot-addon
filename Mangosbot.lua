@@ -598,7 +598,7 @@ function CreateMovementToolBar(frame, y, name, group, x, spacing, register)
 
     tb["passive"] = {
         icon = "passive",
-        command = {[0] = "#a nc +passive,?", [1] = "#a co +passive,?"},
+        command = {[0] = "#a nc ~passive,?", [1] = "#a co ~passive,?", [2] = "#a reset", [3] = "#a co ?"},
         strategy = "passive",
         tooltip = "Passive mode",
         index = index,
