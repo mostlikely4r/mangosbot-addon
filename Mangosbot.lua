@@ -1374,33 +1374,26 @@ function CreateSelectedBotPanel()
             tooltip = "Use melee AOE abilities",
             index = 4
         },
-        ["totems"] = {
-            icon = "totems",
-            command = {[0] = "co ~totems,?"},
-            strategy = "totems",
-            tooltip = "Use totems",
-            index = 5
-        },
         ["bmana"] = {
             icon = "bmana",
             command = {[0] = "co ~bmana,?", [1] = "nc ~bmana,?"},
             strategy = "bmana",
             tooltip = "Buff mana regen",
-            index = 6
+            index = 5
         },
         ["bdps"] = {
             icon = "bdps",
             command = {[0] = "co ~bdps,?", [1] = "nc ~bdps,?"},
             strategy = "bdps",
             tooltip = "Buff DPS",
-            index = 7
+            index = 6
         },
         ["cure"] = {
             icon = "cure",
             command = {[0] = "co ~cure,?", [1] = "nc ~cure,?"},
             strategy = "cure",
             tooltip = "Cure (poison, disease, etc.)",
-            index = 8
+            index = 7
         }
     })
     CreateToolBar(frame, -y, "CLASS_WARLOCK", {
@@ -1472,6 +1465,37 @@ function CreateSelectedBotPanel()
     })
     
     y = y + 25
+    CreateToolBar(frame, -y, "CLASS_SHAMAN_TOTEMS", {
+        ["totems"] = {
+            icon = "totems",
+            command = {[0] = "co ~totems,?"},
+            strategy = "totems",
+            tooltip = "Default totems",
+            index = 0
+        },
+        ["totembar_elements"] = {
+            icon = "totems",
+            command = {[0] = "co ~totembar elements,?"},
+            strategy = "totembar elements",
+            tooltip = "Call of Elements totembar",
+            index = 1
+        },
+        ["totembar_ancestors"] = {
+            icon = "totems",
+            command = {[0] = "co ~totembar ancestors,?"},
+            strategy = "totembar ancestors",
+            tooltip = "Call of Ancestors totembar",
+            index = 2
+        },
+        ["totembarElements"] = {
+            icon = "totems",
+            command = {[0] = "co ~totembar spirits,?"},
+            strategy = "totembar spirits",
+            tooltip = "Call of Spirits totembar",
+            index = 3
+        }                
+    })
+    
     CreateToolBar(frame, -y, "CLASS_PALADIN_BUFF", {
         ["bmana"] = {
             icon = "bmana",
