@@ -960,6 +960,13 @@ function CreateSelectedBotPanel()
             strategy = "",
             tooltip = "Revive at Spirit Healer",
             index = 5
+        },
+        ["talk"] = {
+            icon = "talk",
+            command = {[0] = "talk", [0] = "accept *"},
+            strategy = "",
+            tooltip = "Talk",
+            index = 6
         }
     })
 
@@ -1040,6 +1047,13 @@ function CreateSelectedBotPanel()
             loot = "all",
             tooltip = "Loot everything",
             index = 3
+        },
+        ["reveal"] = {
+            icon = "stats",
+            command = {[0] = "nc ~reveal,?"},
+            strategy = "reveal",
+            tooltip = "Reveal gathering nodes",
+            index = 4
         }
     })
 
