@@ -42,15 +42,14 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: ${{env.BRANCH_CLASSIC}}
-          path: "${{env.BRANCH_CLASSIC}}/Mangosbot"
+          path: "1.14-2.5.2/Mangosbot"
           
       - name: Prepare archives
         run: |
-          md -Force "${{github.workspace}}\releases"
-          7z a -tzip "${{github.workspace}}\releases\${{env.ARCHIVE_PREFIX}}${{env.BRANCH_VANILLA}}${{env.ARCHIVE_SUFFIX}}" "${{env.BRANCH_VANILLA}}/Mangosbot"
-          7z a -tzip "${{github.workspace}}\releases\${{env.ARCHIVE_PREFIX}}${{env.BRANCH_TBC}}${{env.ARCHIVE_SUFFIX}}" "${{env.BRANCH_TBC}}/Mangosbot"
-          7z a -tzip "${{github.workspace}}\releases\${{env.ARCHIVE_PREFIX}}${{env.BRANCH_WOTLK}}${{env.ARCHIVE_SUFFIX}}" "${{env.BRANCH_WOTLK}}/Mangosbot"
-          7z a -tzip "${{github.workspace}}\releases\${{env.ARCHIVE_PREFIX}}${{env.BRANCH_CLASSIC}}${{env.ARCHIVE_SUFFIX}}" "${{env.BRANCH_CLASSIC}}/Mangosbot"
+          7z a -tzip "${{env.ARCHIVE_PREFIX}}${{env.BRANCH_VANILLA}}${{env.ARCHIVE_SUFFIX}}" "${{github.workspace}}/${{env.BRANCH_VANILLA}}/Mangosbot"
+          7z a -tzip "${{env.ARCHIVE_PREFIX}}${{env.BRANCH_TBC}}${{env.ARCHIVE_SUFFIX}}" "${{github.workspace}}/${{env.BRANCH_TBC}}/Mangosbot"
+          7z a -tzip "${{env.ARCHIVE_PREFIX}}${{env.BRANCH_WOTLK}}${{env.ARCHIVE_SUFFIX}}" "${{github.workspace}}/${{env.BRANCH_WOTLK}}/Mangosbot"
+          7z a -tzip "${{env.ARCHIVE_PREFIX}}1.14-2.5.2{{env.ARCHIVE_SUFFIX}}" "${{github.workspace}}/1.14-2.5.2/Mangosbot"
           
       - name: Get current date
         id: date
