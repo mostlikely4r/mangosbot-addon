@@ -55,12 +55,12 @@ jobs:
       - name: Get current date
         id: date
         run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
-        
+          
       - name: Upload release
-        uses: "marvinpinto/action-automatic-releases@latest"
+        uses: svenstaro/upload-release-action@v2
         with:
+          release_name: "Release (${{ steps.date.outputs.date }})"
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest"
-          prerelease: false
-          title: "Release (${{ steps.date.outputs.date }})"
-          files: releases
+          file_glob: true
+          file: releases/*.zip
+          overwrite: true
