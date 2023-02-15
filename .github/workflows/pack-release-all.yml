@@ -65,6 +65,7 @@ jobs:
         with:
           release_name: "Release (${{ steps.date.outputs.date }})"
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          tag: latest
           file_glob: true
           file: releases/*.zip
           overwrite: true
