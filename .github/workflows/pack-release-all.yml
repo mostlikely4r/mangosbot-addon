@@ -1,8 +1,12 @@
 name: Release all branches
 
 # use manual run
+#on:
+#  [workflow_dispatch]
+  
+# on push
 on:
-  [workflow_dispatch]
+  push:
 
 env:
   BRANCH_VANILLA: "1.12"
