@@ -1820,6 +1820,10 @@ function QuerySelectedBot(name)
     wait(0.1, function() SendBotCommand("#a formation ?"..CommandSeparator.."#a stance ?"..CommandSeparator.."#a ll ?"..CommandSeparator.."#a co ?"..CommandSeparator.."#a nc ?"..CommandSeparator.."#a save mana ?"..CommandSeparator.."#a rti ?"..CommandSeparator.."#a react ?", "WHISPER", nil, name) end)
 end
 
+function UpdateBotList(delay)
+    wait(delay, function() SendChatMessage(".bot list", "GUILD") end)
+end
+
 Mangosbot_EventFrame:SetScript("OnEvent", function(self)
     if (event == "PLAYER_TARGET_CHANGED") then
         local name = GetUnitName("target")
@@ -2021,7 +2025,7 @@ Mangosbot_EventFrame:SetScript("OnEvent", function(self)
                     end, key)
                     timeout = timeout + 0.1
                 end
-                wait(1, function() SendBotCommand(".bot list", "SAY") end)
+                UpdateBotList(1)
             end)
 
             local leaveAllBtn = tb.buttons["leave_all"]
@@ -2126,10 +2130,10 @@ Mangosbot_EventFrame:SetScript("OnEvent", function(self)
         end
 
         if (BotRoster:IsVisible() or SelectedBotPanel:IsVisible()) then
-            if (string.find(message, "Hello") == 1 or string.find(message, "Goodbye") == 1) then
-                SendBotCommand(".bot list", "SAY")
-                QueryBotParty()
-            end
+            -- if (string.find(message, "Hello") == 1 or string.find(message, "Goodbye") == 1) then
+            --     SendBotCommand(".bot list", "SAY")
+            --     QueryBotParty()
+            -- end
             if (string.find(message, "Following") == 1 or string.find(message, "Staying") == 1 or string.find(message, "Fleeing") == 1) then
                 wait(0.1, function() SendBotAddonCommand("nc ?", "WHISPER", nil, sender) end)
             end
@@ -2395,7 +2399,15 @@ function OnWhisper(message, sender)
     end
 end
 
+local msgCount = 0
+
 function OnSystemMessage(message)
+    if (string.find(message, 'add: ') == 1) and msgCount == 0 or (string.find(message, 'rm: ') == 1 and msgCount == 0) then
+        UpdateBotList(1) 
+        msgCount = msgCount + 1
+        wait(5, function() msgCount = 0 end)
+        return false
+        end
 	if(message == nil) then return false end
     if (string.find(message, 'Bot roster: ') == 1) then
         botTable = {}
