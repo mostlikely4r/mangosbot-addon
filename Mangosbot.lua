@@ -1821,6 +1821,10 @@ function QuerySelectedBot(name)
     wait(0.1, function() SendBotCommand("#a formation ?"..CommandSeparator.."#a stance ?"..CommandSeparator.."#a ll ?"..CommandSeparator.."#a co ?"..CommandSeparator.."#a nc ?"..CommandSeparator.."#a save mana ?"..CommandSeparator.."#a rti ?"..CommandSeparator.."#a react ?", "WHISPER", nil, name) end)
 end
 
+function UpdateBotList(delay)
+    wait(delay, function() SendChatMessage(".bot list", "GUILD") end)
+end
+
 Mangosbot_EventFrame:SetScript("OnEvent", function(self, event, arg1, arg2, arg3, arg4)		
     if (event == "PLAYER_TARGET_CHANGED") then
         local name = GetUnitName("target")
@@ -1937,11 +1941,13 @@ Mangosbot_EventFrame:SetScript("OnEvent", function(self, event, arg1, arg2, arg3
                 inviteBtn["key"] = key
                 inviteBtn:SetScript("OnClick", function()
                     InviteUnit(inviteBtn["key"])
+                    UpdateBotList(1)
                     --InviteByName(inviteBtn["key"])
                 end)
                 leaveBtn["key"] = key
                 leaveBtn:SetScript("OnClick", function()
                     SendBotCommand("leave", "WHISPER", nil, leaveBtn["key"])
+                    UpdateBotList(1)
                 end)
                 whisperBtn["key"] = key
                 whisperBtn:SetScript("OnClick", function()
@@ -1989,6 +1995,7 @@ Mangosbot_EventFrame:SetScript("OnEvent", function(self, event, arg1, arg2, arg3
             loginAllBtn["allBots"] = allBots
             loginAllBtn:SetScript("OnClick", function()
                 SendBotCommand(".bot add " .. loginAllBtn["allBots"], "SAY")
+                UpdateBotList(15)
             end)
 
             local logoutAllBtn = tb.buttons["logout_all"]
@@ -2002,6 +2009,7 @@ Mangosbot_EventFrame:SetScript("OnEvent", function(self, event, arg1, arg2, arg3
             logoutAllBtn["allBots"] = allBots
             logoutAllBtn:SetScript("OnClick", function()
                 SendBotCommand(".bot rm " .. logoutAllBtn["allBots"], "SAY")
+                UpdateBotList(15)
             end)
 
             local inviteAllBtn = tb.buttons["invite_all"]
@@ -2022,7 +2030,7 @@ Mangosbot_EventFrame:SetScript("OnEvent", function(self, event, arg1, arg2, arg3
                     end, key)
                     timeout = timeout + 0.1
                 end
-                wait(1, function() SendBotCommand(".bot list", "SAY") end)
+                UpdateBotList(10)
             end)
 
             local leaveAllBtn = tb.buttons["leave_all"]
@@ -2040,6 +2048,7 @@ Mangosbot_EventFrame:SetScript("OnEvent", function(self, event, arg1, arg2, arg3
                     wait(timeout, function(key) SendBotCommand("leave", "WHISPER", nil, key) end, key)
                     timeout = timeout + 0.1
                 end
+                UpdateBotList(10)
             end)
             
 			local summonAllBtn = tb.buttons["summon_all"]
@@ -2127,10 +2136,10 @@ Mangosbot_EventFrame:SetScript("OnEvent", function(self, event, arg1, arg2, arg3
         end
 
         if (BotRoster:IsVisible() or SelectedBotPanel:IsVisible()) then
-            if (string.find(message, "Hello") == 1 or string.find(message, "Goodbye") == 1) then
-                SendBotCommand(".bot list", "SAY")
-                QueryBotParty()
-            end
+            -- if (string.find(message, "Hello") == 1 or string.find(message, "Goodbye") == 1) then
+            --     SendBotCommand(".bot list", "SAY")
+            --     QueryBotParty()
+            -- end
             if (string.find(message, "Following") == 1 or string.find(message, "Staying") == 1 or string.find(message, "Fleeing") == 1) then
                 wait(0.1, function() SendBotAddonCommand("nc ?", "WHISPER", nil, sender) end)
             end
@@ -2398,6 +2407,7 @@ end
 
 function OnSystemMessage(message)
 	if(message == nil) then return false end
+    if(string.find(message, 'add: ') == 1) or (string.find(message, 'rm: ') == 1) then UpdateBotList(1) end
     if (string.find(message, 'Bot roster: ') == 1) then
         botTable = {}
         local text = string.sub(message, 13)
