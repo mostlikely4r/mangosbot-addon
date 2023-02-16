@@ -1995,7 +1995,6 @@ Mangosbot_EventFrame:SetScript("OnEvent", function(self, event, arg1, arg2, arg3
             loginAllBtn["allBots"] = allBots
             loginAllBtn:SetScript("OnClick", function()
                 SendBotCommand(".bot add " .. loginAllBtn["allBots"], "SAY")
-                UpdateBotList(15)
             end)
 
             local logoutAllBtn = tb.buttons["logout_all"]
@@ -2009,7 +2008,6 @@ Mangosbot_EventFrame:SetScript("OnEvent", function(self, event, arg1, arg2, arg3
             logoutAllBtn["allBots"] = allBots
             logoutAllBtn:SetScript("OnClick", function()
                 SendBotCommand(".bot rm " .. logoutAllBtn["allBots"], "SAY")
-                UpdateBotList(15)
             end)
 
             local inviteAllBtn = tb.buttons["invite_all"]
@@ -2405,9 +2403,16 @@ function OnWhisper(message, sender)
     end
 end
 
+local msgCount = 0
+
 function OnSystemMessage(message)
-	if(message == nil) then return false end
-    if(string.find(message, 'add: ') == 1) or (string.find(message, 'rm: ') == 1) then UpdateBotList(1) end
+	if (message == nil) then return false end
+    if (string.find(message, 'add: ') == 1) and msgCount == 0 or (string.find(message, 'rm: ') == 1 and msgCount == 0) then
+        UpdateBotList(1) 
+        msgCount = msgCount + 1
+        wait(5, function() msgCount = 0 end)
+        return false
+        end
     if (string.find(message, 'Bot roster: ') == 1) then
         botTable = {}
         local text = string.sub(message, 13)
