@@ -2402,13 +2402,13 @@ end
 local msgCount = 0
 
 function OnSystemMessage(message)
+    if (message == nil) then return false end
     if (string.find(message, 'add: ') == 1) and msgCount == 0 or (string.find(message, 'rm: ') == 1 and msgCount == 0) then
         UpdateBotList(1) 
         msgCount = msgCount + 1
         wait(5, function() msgCount = 0 end)
         return false
         end
-	if(message == nil) then return false end
     if (string.find(message, 'Bot roster: ') == 1) then
         botTable = {}
         local text = string.sub(message, 13)
