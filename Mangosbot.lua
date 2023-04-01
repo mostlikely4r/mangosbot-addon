@@ -1024,12 +1024,19 @@ function CreateSelectedBotPanel()
             tooltip = "Show mail",
             index = 4
         },
+		["details"] = {
+            icon = "details",
+            command = {[0] = "who\\\\talents\\\\formation ?\\\\stance ?\\\\ll ?\\\\co ?\\\\nc ?\\\\save mana ?\\\\rti ?\\\\react ?"},
+            strategy = "",
+            tooltip = "Show bot details",
+            index = 5
+        },
         ["help"] = {
             icon = "help",
             command = {[0] = "help"},
             strategy = "",
             tooltip = "Help",
-            index = 5
+            index = 6
         }
     })
 	
@@ -1640,35 +1647,35 @@ function CreateSelectedBotPanel()
     CreateToolBar(frame, -y, "CLASS_PALADIN_AURA", {
         ["baoe"] = {
             icon = "aoe",
-            command = {[0] = "#a co +baoe,?", [1] = "#a nc +baoe,?"},
+            command = {[0] = "#a co +baoe,?", [1] = "#a nc +baoe,?", [2] = "#a do retribution aura"},
             strategy = "baoe",
             tooltip = "Retribution aura",
             index = 0
         },
         ["rfire"] = {
             icon = "fire",
-            command = {[0] = "#a co +rfire,?", [1] = "#a nc +rfire,?"},
+            command = {[0] = "#a co +rfire,?", [1] = "#a nc +rfire,?", [2] = "#a do fire resistance aura"},
             strategy = "rfire",
             tooltip = "Fire resistance aura",
             index = 1
         },
         ["rfrost"] = {
             icon = "frost",
-            command = {[0] = "#a co +rfrost,?", [1] = "#a nc +rfrost,?"},
+            command = {[0] = "#a co +rfrost,?", [1] = "#a nc +rfrost,?", [2] = "#a do frost resistance aura"},
             strategy = "rfrost",
             tooltip = "Frost resistance aura",
             index = 2
         },
         ["rshadow"] = {
             icon = "rshadow",
-            command = {[0] = "#a co +rshadow,?", [1] = "#a nc +rshadow,?"},
+            command = {[0] = "#a co +rshadow,?", [1] = "#a nc +rshadow,?", [2] = "#a do shadow resistance aura"},
             strategy = "rshadow",
             tooltip = "Shadow resistance aura",
             index = 3
         },
         ["barmor"] = {
             icon = "barmor",
-            command = {[0] = "#a co +barmor,?", [1] = "#a nc +barmor,?"},
+            command = {[0] = "#a co +barmor,?", [1] = "#a nc +barmor,?", [2] = "#a do devotion aura"},
             strategy = "barmor",
             tooltip = "Devotion aura",
             index = 4
