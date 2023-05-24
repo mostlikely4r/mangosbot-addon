@@ -776,6 +776,27 @@ function CreateGenericNonCombatToolBar(frame, y, name, group, x, spacing, regist
             tooltip = "Gather herbs, ore, etc.",
             index = 2,
             group = group
+        },
+        ["reveal"] = {
+            icon = "stats",
+            command = {[0] = "#a nc ~reveal,?"},
+            strategy = "reveal",
+            tooltip = "Reveal gathering nodes",
+            index = 3
+        },
+        ["mount"] = {
+            icon = "mount",
+            command = {[0] = "#a nc ~mount,?"},
+            strategy = "mount",
+            tooltip = "Mount up when possible",
+            index = 4
+        },		
+        ["travel"] = {
+            icon = "travel",
+            command = {[0] = "#a nc ~travel,?"},
+            strategy = "travel",
+            tooltip = "Move to distant locations",
+            index = 5
         }
     }, x, spacing, register)
 end
@@ -1095,53 +1116,53 @@ function CreateSelectedBotPanel()
 
     y = y + 25
     CreateToolBar(frame, -y, "loot", {
-        ["ll_normal"] = {
-            icon = "ll_normal",
-            command = {[0] = "ll normal"},
-            loot = "normal",
-            tooltip = "Loot tradeskill items only",
+        ["ll_equip"] = {
+            icon = "ll_equip",
+            command = {[0] = "ll ~equip"},
+            loot = "equip",
+            tooltip = "Loot equipment upgrades",
             index = 0
         },
-        ["ll_gray"] = {
-            icon = "ll_gray",
-            command = {[0] = "ll gray"},
-            loot = "gray",
-            tooltip = "Loot gray items",
+        ["ll_qyest"] = {
+            icon = "ll_quest",
+            command = {[0] = "ll ~quest"},
+            loot = "quest",
+            tooltip = "Loot quest items",
             index = 1
         },
+        ["ll_skill"] = {
+            icon = "ll_skill",
+            command = {[0] = "ll ~skill"},
+            loot = "skill",
+            tooltip = "Loot tradeskill items",
+            index = 2
+        },		
         ["ll_disenchant"] = {
             icon = "ll_disenchant",
-            command = {[0] = "ll disenchant"},
+            command = {[0] = "ll ~disenchant"},
             loot = "disenchant",
-            tooltip = "Loot BoE items for disenchanting",
-            index = 2
-        },
-        ["ll_all"] = {
-            icon = "ll_all",
-            command = {[0] = "ll all"},
-            loot = "all",
-            tooltip = "Loot everything",
+            tooltip = "Loot items for disenchanting",
             index = 3
         },
-        ["reveal"] = {
-            icon = "stats",
-            command = {[0] = "#a nc ~reveal,?"},
-            strategy = "reveal",
-            tooltip = "Reveal gathering nodes",
+        ["ll_use"] = {
+            icon = "ll_use",
+            command = {[0] = "ll ~use"},
+            loot = "use",
+            tooltip = "Loot consumables/reagents",
             index = 4
         },
-        ["mount"] = {
-            icon = "mount",
-            command = {[0] = "#a nc ~mount,?"},
-            strategy = "mount",
-            tooltip = "Mount up when possible",
+        ["ll_vendor"] = {
+            icon = "ll_vendor",
+            command = {[0] = "ll ~vendor"},
+            loot = "vendor",
+            tooltip = "Loot items for money",
             index = 5
         },		
-        ["travel"] = {
-            icon = "travel",
-            command = {[0] = "#a nc ~travel,?"},
-            strategy = "travel",
-            tooltip = "Move to distant locations",
+        ["ll_trash"] = {
+            icon = "ll_trash",
+            command = {[0] = "ll ~trash"},
+            loot = "trash",
+            tooltip = "Loot useless items",
             index = 6
         }
     })
